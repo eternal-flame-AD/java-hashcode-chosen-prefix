@@ -12,3 +12,6 @@ criterion = { version = "0.7", default-features = false, features = ["html_repor
 name = "collision"
 harness = false
 
+[profile.release]
+opt-level = 3
+panic = "abort"

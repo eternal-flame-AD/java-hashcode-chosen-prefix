@@ -9,6 +9,24 @@ use std::arch::wasm32::*;
 
 use std::io::Write;
 
+#[cold]
+fn unlikely() {}
+
+#[rustfmt::skip]
+#[allow(unused_macros)]
+macro_rules! repeat8 {
+    ($i:ident, $c:block) => {
+        { const $i: usize = 0; $c }
+        { const $i: usize = 1; $c }
+        { const $i: usize = 2; $c }
+        { const $i: usize = 3; $c }
+        { const $i: usize = 4; $c }
+        { const $i: usize = 5; $c }
+        { const $i: usize = 6; $c }
+        { const $i: usize = 7; $c }
+    };
+}
+
 #[rustfmt::skip]
 #[allow(unused_macros)]
 macro_rules! repeat16 {
@@ -219,6 +237,8 @@ pub fn find_collision(
                 let cmp_48_match = !u32x4_all_true(cmp_48_mask);
 
                 if cmp_04_match | cmp_48_match {
+                    unlikely();
+
                     let final_hashes = if cmp_48_match {
                         final_hashes_48
                     } else {
@@ -473,6 +493,8 @@ pub fn find_collision(
                 };
 
                 if cmp_04_match | cmp_48_match | cmp_812_match | cmp_1216_match {
+                    unlikely();
+
                     let final_hashes = if cmp_04_match {
                         final_hashes_04
                     } else if cmp_48_match {
@@ -609,17 +631,21 @@ pub fn find_collision(
                 target_contribs_816 = _mm256_add_epi32(target_contribs_816, dv);
                 t0 /= 10;
             }
+            target_contribs_08 = _mm256_mulloi_epi32!(target_contribs_08, 31);
+            target_contribs_816 = _mm256_mulloi_epi32!(target_contribs_816, 31);
             for x1 in 0..(32 * 32 * 32) {
                 let mut final_hashes_08 = target_contribs_08;
                 let mut final_hashes_816 = target_contribs_816;
                 let mut t = x1;
 
-                for _ in 0..3 {
+                for i in 0..3 {
                     let d = (t % 32) as u32 + (b'A' as u32);
                     let dv = _mm256_set1_epi32(d as _);
-                    final_hashes_08 = _mm256_mulloi_epi32!(final_hashes_08, 31);
+                    if i > 0 {
+                        final_hashes_08 = _mm256_mulloi_epi32!(final_hashes_08, 31);
+                        final_hashes_816 = _mm256_mulloi_epi32!(final_hashes_816, 31);
+                    }
                     final_hashes_08 = _mm256_add_epi32(final_hashes_08, dv);
-                    final_hashes_816 = _mm256_mulloi_epi32!(final_hashes_816, 31);
                     final_hashes_816 = _mm256_add_epi32(final_hashes_816, dv);
                     t /= 32;
                 }
@@ -651,6 +677,8 @@ pub fn find_collision(
                 };
 
                 if cmp_08_match | cmp_816_match {
+                    unlikely();
+
                     let final_hashes = if cmp_08_match {
                         final_hashes_08
                     } else {
@@ -755,119 +783,120 @@ pub fn find_collision(
         });
         let nonce_range = _mm512_set1_epi32((NONCE_END - NONCE_START) as _);
         let target_contribs_base = _mm512_loadu_si512(target_contribs.as_ptr().cast());
-        let mut target_contribs_5_base = target_contribs_base;
-        target_contribs_5_base = _mm512_mulloi_epi32!(target_contribs_5_base, 31);
-        target_contribs_5_base =
-            _mm512_add_epi32(target_contribs_5_base, _mm512_set1_epi32(b'5' as _));
-        let mut target_contribs_55_base = target_contribs_5_base;
-        target_contribs_55_base = _mm512_mulloi_epi32!(target_contribs_55_base, 31);
-        target_contribs_55_base =
-            _mm512_add_epi32(target_contribs_55_base, _mm512_set1_epi32(b'5' as _));
-        let mut target_contribs_555_base = target_contribs_55_base;
-        target_contribs_555_base = _mm512_mulloi_epi32!(target_contribs_555_base, 31);
-        target_contribs_555_base =
-            _mm512_add_epi32(target_contribs_555_base, _mm512_set1_epi32(b'5' as _));
 
-        let mut min_diff = _mm512_set1_epi32(!0);
+        let mut min_diff0 = _mm512_set1_epi32(!0);
+        let mut min_diff1 = _mm512_set1_epi32(!0);
 
         for x0 in 0..10000u64 {
-            let mut target_contribs = target_contribs_base;
-            let mut target_contribs_5 = target_contribs_5_base;
-            let mut target_contribs_55 = target_contribs_55_base;
-            let mut target_contribs_555 = target_contribs_555_base;
+            let mut tcs = [target_contribs_base; 8];
+            for i in 1..8 {
+                tcs[i] = _mm512_add_epi32(
+                    _mm512_mulloi_epi32!(tcs[i - 1], 31),
+                    _mm512_set1_epi32(b'5' as _),
+                );
+            }
+
             let mut t0 = x0;
             for _ in 0..4 {
                 let d = (t0 % 10) as u32 + (b'0' as u32);
                 let dv = _mm512_set1_epi32(d as _);
-                target_contribs = _mm512_mulloi_epi32!(target_contribs, 31);
-                target_contribs = _mm512_add_epi32(target_contribs, dv);
-                target_contribs_5 = _mm512_mulloi_epi32!(target_contribs_5, 31);
-                target_contribs_5 = _mm512_add_epi32(target_contribs_5, dv);
-                target_contribs_55 = _mm512_mulloi_epi32!(target_contribs_55, 31);
-                target_contribs_55 = _mm512_add_epi32(target_contribs_55, dv);
-                target_contribs_555 = _mm512_mulloi_epi32!(target_contribs_555, 31);
-                target_contribs_555 = _mm512_add_epi32(target_contribs_555, dv);
+                for i in 0..8 {
+                    tcs[i] = _mm512_mulloi_epi32!(tcs[i], 31);
+                    tcs[i] = _mm512_add_epi32(tcs[i], dv);
+                }
                 t0 /= 10;
             }
+            for i in 0..8 {
+                tcs[i] = _mm512_mulloi_epi32!(tcs[i], 31);
+            }
+
             for x1 in 0..(32 * 32 * 32) {
-                let mut final_hashes = target_contribs;
-                let mut final_hashes_5 = target_contribs_5;
-                let mut final_hashes_55 = target_contribs_55;
-                let mut final_hashes_555 = target_contribs_555;
+                let mut fhs = tcs;
+
                 let mut t = x1;
 
-                for _ in 0..3 {
+                for i in 0..3 {
                     let d = (t % 32) as u32 + (b'A' as u32);
                     let dv = _mm512_set1_epi32(d as _);
-                    final_hashes = _mm512_mulloi_epi32!(final_hashes, 31);
-                    final_hashes = _mm512_add_epi32(final_hashes, dv);
-                    final_hashes_5 = _mm512_mulloi_epi32!(final_hashes_5, 31);
-                    final_hashes_5 = _mm512_add_epi32(final_hashes_5, dv);
-                    final_hashes_55 = _mm512_mulloi_epi32!(final_hashes_55, 31);
-                    final_hashes_55 = _mm512_add_epi32(final_hashes_55, dv);
-                    final_hashes_555 = _mm512_mulloi_epi32!(final_hashes_555, 31);
-                    final_hashes_555 = _mm512_add_epi32(final_hashes_555, dv);
+                    if i > 0 {
+                        for j in 0..8 {
+                            fhs[j] = _mm512_mulloi_epi32!(fhs[j], 31);
+                        }
+                    }
+                    for j in 0..8 {
+                        fhs[j] = _mm512_add_epi32(fhs[j], dv);
+                    }
                     t /= 32;
                 }
-                final_hashes = _mm512_mulloi_epi32!(complement; final_hashes, 31);
-                final_hashes_5 = _mm512_mulloi_epi32!(complement; final_hashes_5, 31);
-                final_hashes_55 = _mm512_mulloi_epi32!(complement; final_hashes_55, 31);
-                final_hashes_555 = _mm512_mulloi_epi32!(complement; final_hashes_555, 31);
+                let [fh0, fh1, fh2, fh3, fh4, fh5, fh6, fh7] = [
+                    _mm512_mulloi_epi32!(fhs[0], 31),
+                    _mm512_mulloi_epi32!(fhs[1], 31),
+                    _mm512_mulloi_epi32!(fhs[2], 31),
+                    _mm512_mulloi_epi32!(fhs[3], 31),
+                    _mm512_mulloi_epi32!(fhs[4], 31),
+                    _mm512_mulloi_epi32!(fhs[5], 31),
+                    _mm512_mulloi_epi32!(fhs[6], 31),
+                    _mm512_mulloi_epi32!(fhs[7], 31),
+                ];
+
                 repeat16!(I, {
-                    let diff = _mm512_add_epi32(_mm512_set1_epi32(goals[I] as _), final_hashes);
-                    let diff_5 = _mm512_add_epi32(_mm512_set1_epi32(goals[I] as _), final_hashes_5);
-                    let diff_55 =
-                        _mm512_add_epi32(_mm512_set1_epi32(goals[I] as _), final_hashes_55);
-                    let diff_555 =
-                        _mm512_add_epi32(_mm512_set1_epi32(goals[I] as _), final_hashes_555);
-                    min_diff = _mm512_min_epu32(min_diff, diff);
-                    min_diff = _mm512_min_epu32(min_diff, diff_5);
-                    min_diff = _mm512_min_epu32(min_diff, diff_55);
-                    min_diff = _mm512_min_epu32(min_diff, diff_555);
+                    let this_goal = _mm512_set1_epi32(goals[I] as _);
+                    let t0 = _mm512_add_epi32(this_goal, fh0);
+                    let t1 = _mm512_add_epi32(this_goal, fh1);
+                    let t2 = _mm512_add_epi32(this_goal, fh2);
+                    let t3 = _mm512_add_epi32(this_goal, fh3);
+                    let t4 = _mm512_add_epi32(this_goal, fh4);
+                    let t5 = _mm512_add_epi32(this_goal, fh5);
+                    let t6 = _mm512_add_epi32(this_goal, fh6);
+                    let t7 = _mm512_add_epi32(this_goal, fh7);
+                    min_diff0 = _mm512_min_epu32(min_diff0, t0);
+                    min_diff1 = _mm512_min_epu32(min_diff1, t1);
+                    min_diff0 = _mm512_min_epu32(min_diff0, t2);
+                    min_diff1 = _mm512_min_epu32(min_diff1, t3);
+                    min_diff0 = _mm512_min_epu32(min_diff0, t4);
+                    min_diff1 = _mm512_min_epu32(min_diff1, t5);
+                    min_diff0 = _mm512_min_epu32(min_diff0, t6);
+                    min_diff1 = _mm512_min_epu32(min_diff1, t7);
                 });
 
-                if _mm512_cmplt_epu32_mask(min_diff, nonce_range) != 0 {
+                let even_matched = _mm512_cmplt_epu32_mask(min_diff0, nonce_range) != 0;
+                let odd_matched = _mm512_cmplt_epu32_mask(min_diff1, nonce_range) != 0;
+                if even_matched || odd_matched {
+                    unlikely();
                     let mut five_counts = 0;
-                    let mut mask = 0;
 
-                    for i in 0..16 {
-                        let diff = _mm512_add_epi32(_mm512_set1_epi32(goals[i] as _), final_hashes);
-                        mask |= _mm512_cmplt_epu32_mask(diff, nonce_range);
-                    }
+                    let mut final_hash = _mm512_setzero_epi32();
 
-                    if mask == 0 {
-                        five_counts += 1;
-                        final_hashes = final_hashes_5;
-
-                        for i in 0..16 {
-                            let diff =
-                                _mm512_add_epi32(_mm512_set1_epi32(goals[i] as _), final_hashes_5);
-                            mask |= _mm512_cmplt_epu32_mask(diff, nonce_range);
+                    'search_five_counts: for _ in core::iter::once(()) {
+                        for (i, fh) in if even_matched {
+                            [fh0, fh2, fh4, fh6]
+                        } else {
+                            [fh1, fh3, fh5, fh7]
                         }
-
-                        if mask == 0 {
-                            five_counts += 1;
-                            final_hashes = final_hashes_55;
-
-                            for i in 0..16 {
-                                let diff = _mm512_add_epi32(
-                                    _mm512_set1_epi32(goals[i] as _),
-                                    final_hashes_55,
-                                );
+                        .into_iter()
+                        .enumerate()
+                        {
+                            let mut mask = 0;
+                            for j in 0..16 {
+                                let diff = _mm512_add_epi32(_mm512_set1_epi32(goals[j] as _), fh);
                                 mask |= _mm512_cmplt_epu32_mask(diff, nonce_range);
                             }
 
-                            if mask == 0 {
-                                five_counts += 1;
-                                final_hashes = final_hashes_555;
+                            if mask != 0 {
+                                five_counts = i * 2 + if even_matched { 0 } else { 1 };
+                                final_hash = fh;
+
+                                break 'search_five_counts;
                             }
                         }
+
+                        unreachable!();
                     }
 
                     let match_idx_back = goals
                         .iter()
                         .position(|&g| {
-                            let diff = _mm512_add_epi32(_mm512_set1_epi32(g as _), final_hashes);
+                            let diff = _mm512_add_epi32(_mm512_set1_epi32(g as _), final_hash);
                             _mm512_cmplt_epu32_mask(diff, nonce_range) != 0
                         })
                         .unwrap();
@@ -875,10 +904,7 @@ pub fn find_collision(
                     let mut goal_diffs = [0u32; 16];
                     _mm512_storeu_si512(
                         goal_diffs.as_mut_ptr().cast(),
-                        _mm512_add_epi32(
-                            _mm512_set1_epi32(goals[match_idx_back] as _),
-                            final_hashes,
-                        ),
+                        _mm512_add_epi32(_mm512_set1_epi32(goals[match_idx_back] as _), final_hash),
                     );
 
                     let match_idx_front = goal_diffs
@@ -905,7 +931,8 @@ pub fn find_collision(
                     }
                     if !check_json_string(&final_msg.get_ref()[final_msg.position() as usize - 3..])
                     {
-                        min_diff = _mm512_set1_epi32(!0);
+                        min_diff0 = _mm512_set1_epi32(!0);
+                        min_diff1 = _mm512_set1_epi32(!0);
                         continue;
                     }
                     final_msg
