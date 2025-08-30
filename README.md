@@ -1,4 +1,4 @@
-Java hashcode chosen-prefix/splicing collision finder using SIMD meet-in-the-middle.
+Java hashcode structured chosen-prefix/splicing collision finder using tableless SIMD meet-in-the-middle.
 
 Supports baseline x86 (SSE2), AVX-512 and SIMD128.
 
