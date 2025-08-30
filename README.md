@@ -19,10 +19,14 @@ collision/meet_in_the_middle
 collision/meet_in_the_middle
                         time:   [4.6007 ms 4.8741 ms 5.1513 ms]
                         thrpt:  [416.88 Gelem/s 440.59 Gelem/s 466.77 Gelem/s]
+collision_parallel/meet_in_the_middle
+                        time:   [376.11 µs 379.49 µs 382.97 µs]
 > RUSTFLAGS="-Ctarget-feature=+avx512f" cargo bench # AVX-512
 collision/meet_in_the_middle
                         time:   [2.3941 ms 2.4884 ms 2.5847 ms]
                         thrpt:  [830.85 Gelem/s 862.98 Gelem/s 896.98 Gelem/s]
+collision_parallel/meet_in_the_middle
+                        time:   [176.47 µs 178.13 µs 179.86 µs]
 ```
 
 Demo:

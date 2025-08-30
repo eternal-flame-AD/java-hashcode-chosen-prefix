@@ -6,6 +6,12 @@ edition = "2024"
 [dependencies]
 
 [dev-dependencies]
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+rayon = { version = "1.11" }
+criterion = { version = "0.7", features = ["html_reports"] }
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
 criterion = { version = "0.7", default-features = false, features = ["html_reports"] }
 
 [[bench]]
