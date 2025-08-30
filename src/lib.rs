@@ -543,7 +543,7 @@ pub fn find_collision(
                     final_msg.write_all(&BACK_SPLICES[match_idx_back]).unwrap();
                     final_msg.write_all(&[b'"']).unwrap();
 
-                    let count = x0 * 1000 + x1;
+                    let count = x0 * (32 * 32 * 32) + x1;
 
                     return CollisionResult {
                         len: final_msg.position() as usize,
@@ -708,7 +708,7 @@ pub fn find_collision(
                     final_msg.write_all(&BACK_SPLICES[match_idx_back]).unwrap();
                     final_msg.write_all(&[b'"']).unwrap();
 
-                    let count = x0 * 1000 + x1;
+                    let count = x0 * (32 * 32 * 32) + x1;
 
                     return CollisionResult {
                         len: final_msg.position() as usize,
@@ -914,7 +914,7 @@ pub fn find_collision(
                     final_msg.write_all(&BACK_SPLICES[match_idx_back]).unwrap();
                     final_msg.write_all(&[b'"']).unwrap();
 
-                    let count = x0 * 1000 + x1;
+                    let count = x0 * (32 * 32 * 32) + x1;
 
                     return CollisionResult {
                         len: final_msg.position() as usize,

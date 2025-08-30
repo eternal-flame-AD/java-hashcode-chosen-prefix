@@ -30,36 +30,36 @@ Demo:
 ```
 > RUSTFLAGS="-Ctarget-cpu=native" cargo run --release 
 
- {"uid":0,"account_balance":0 ~ {"uid":0,"account_balance":99999,"_fixup":"j50000G[O_4122787310" (481b9c93)
-Found within 15174 iters in 290.824µs
+{"uid":0,"account_balance":0 ~ {"uid":0,"account_balance":99999,"_fixup":"j50000G[O_4122787310" (481b9c93)
+Found within 15174 iters in 262.791µs
 {"uid":1,"account_balance":0 ~ {"uid":1,"account_balance":99999,"_fixup":"g58100LGLq6403136037" (54b49214)
-Found within 29467 iters in 11.493003ms
+Found within 601291 iters in 10.429732ms
 {"uid":2,"account_balance":0 ~ {"uid":2,"account_balance":99999,"_fixup":"n50000^RAO4376563586" (614d8795)
-Found within 573 iters in 11.362µs
+Found within 573 iters in 10.159µs
 {"uid":3,"account_balance":0 ~ {"uid":3,"account_balance":99999,"_fixup":"i52200`NZa5038451205" (6de67d16)
-Found within 48047 iters in 14.174322ms
+Found within 746943 iters in 12.749041ms
 {"uid":4,"account_balance":0 ~ {"uid":4,"account_balance":99999,"_fixup":"f57100WVOf0249477215" (7a7f7297)
-Found within 32030 iters in 10.824959ms
+Found within 572086 iters in 9.75622ms
 {"uid":5,"account_balance":0 ~ {"uid":5,"account_balance":99999,"_fixup":"e5556000K[[z4830083526" (87186818)
-Found within 33466 iters in 4.252274ms
+Found within 224074 iters in 3.828896ms
 {"uid":6,"account_balance":0 ~ {"uid":6,"account_balance":99999,"_fixup":"g56000M_Ad4903300127" (93b15d99)
-Found within 6972 iters in 3.75232ms
+Found within 197580 iters in 3.377776ms
 {"uid":7,"account_balance":0 ~ {"uid":7,"account_balance":99999,"_fixup":"d5552000LCMd4903300127" (a04a531a)
-Found within 14363 iters in 1.457327ms
+Found within 77899 iters in 1.314344ms
 {"uid":8,"account_balance":0 ~ {"uid":8,"account_balance":99999,"_fixup":"a5552100YYBp5038451205" (ace3489b)
-Found within 13816 iters in 7.523127ms
+Found within 395032 iters in 6.758407ms
 {"uid":9,"account_balance":0 ~ {"uid":9,"account_balance":99999,"_fixup":"a553000\\Cp4012507866" (b97c3e1c)
-Found within 5939 iters in 1.937172ms
+Found within 101243 iters in 1.707984ms
 {"uid":10,"account_balance":0 ~ {"uid":10,"account_balance":99999,"_fixup":"d559000VJAE5038451034" (9485d7a4)
-Found within 9309 iters in 5.625541ms
+Found within 295221 iters in 5.024804ms
 {"uid":11,"account_balance":0 ~ {"uid":11,"account_balance":99999,"_fixup":"e5557000TUTy4012507734" (a11ecd25)
-Found within 27115 iters in 4.735585ms
+Found within 249491 iters in 4.208198ms
 {"uid":12,"account_balance":0 ~ {"uid":12,"account_balance":99999,"_fixup":"k5551100^GBv6403136037" (adb7c2a6)
-Found within 12245 iters in 6.891984ms
+Found within 361693 iters in 6.185626ms
 {"uid":13,"account_balance":0 ~ {"uid":13,"account_balance":99999,"_fixup":"h0000UVNz4020643147" (ba50b827)
-Found within 14004 iters in 261.308µs
+Found within 14004 iters in 236.23µs
 {"uid":14,"account_balance":0 ~ {"uid":14,"account_balance":99999,"_fixup":"h53000DYMm0249477215" (c6e9ada8)
-Found within 16059 iters in 2.108999ms
+Found within 111363 iters in 1.899259ms
 {"uid":15,"account_balance":0 ~ {"uid":15,"account_balance":99999,"_fixup":"c1000KJGg2622951835" (d382a329)
-Found within 7442 iters in 731.144µs
+Found within 39210 iters in 680.226µs
 ```
