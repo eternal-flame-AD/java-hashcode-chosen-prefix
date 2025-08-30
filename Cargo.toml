@@ -1,0 +1,14 @@
+[package]
+name = "java_hashcode_chosen_prefix"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[dev-dependencies]
+criterion = { version = "0.7", default-features = false, features = ["html_reports"] }
+
+[[bench]]
+name = "collision"
+harness = false
+
