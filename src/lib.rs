@@ -236,8 +236,8 @@ pub fn find_collision(
                     }
                     if !check_json_string(&final_msg.get_ref()[final_msg.position() as usize - 3..])
                     {
-                        cmp_04_mask = u32x4_splat(0);
-                        cmp_48_mask = u32x4_splat(0);
+                        cmp_04_mask = u32x4_splat(!0);
+                        cmp_48_mask = u32x4_splat(!0);
                         continue;
                     }
                     final_msg
